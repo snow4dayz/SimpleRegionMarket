@@ -7,7 +7,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 
-import com.iCo6.system.Accounts;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 class PListener extends PlayerListener {
@@ -19,59 +18,64 @@ class PListener extends PlayerListener {
 			if ((b.getTypeId() == 63) || (b.getTypeId() == 68)) {
 				Sign sign = (Sign) b.getState();
 				if (sign.getLine(0).equals("[AGENT]")) {
-					RegionAgent agent = SimpleRegionMarket.getAgentManager().getAgent(b.getLocation());
-
-					if (agent == null)
-						return;
-
-					Player p = event.getPlayer();
-					ProtectedRegion region = SimpleRegionMarket.getWorldGuard().getRegionManager(b.getLocation().getWorld()).getRegion(agent.getRegion());
-					
-					if(!SimpleRegionMarket.canBuy(p)) {
-						SimpleRegionMarket.outputError(p, "You don't have the permission to buy a region.");
-					} else if (SimpleRegionMarket.getAgentManager().isOwner(p, region)) {
-						if(agent.getOwnerPlayer() != null) {
-							if(p.equals(agent.getOwnerPlayer())) {
-								SimpleRegionMarket.outputDebug(p, "This is your agent.");
+					if(SimpleRegionMarket.getEconomicManager() != null) {
+						RegionAgent agent = SimpleRegionMarket.getAgentManager().getAgent(b.getLocation());
+	
+						if (agent == null)
+							return;
+	
+						Player p = event.getPlayer();
+						ProtectedRegion region = SimpleRegionMarket.getWorldGuard().getRegionManager(b.getLocation().getWorld()).getRegion(agent.getRegion());
+						
+						if(!SimpleRegionMarket.canBuy(p)) {
+							SimpleRegionMarket.outputError(p, "You don't have the permission to buy a region.");
+						} else if (SimpleRegionMarket.getAgentManager().isOwner(p, region)) {
+							if(agent.getOwnerPlayer() != null) {
+								if(p.equals(agent.getOwnerPlayer())) {
+									SimpleRegionMarket.outputDebug(p, "This is your agent.");
+								} else {
+									SimpleRegionMarket.outputDebug(p, "You cannot buy this region, because it's yours.");
+								}
 							} else {
 								SimpleRegionMarket.outputDebug(p, "You cannot buy this region, because it's yours.");
 							}
 						} else {
-							SimpleRegionMarket.outputDebug(p, "You cannot buy this region, because it's yours.");
-						}
-					} else {
-						String owner = agent.getOwner();
-						Accounts acc = new Accounts();
-						if (!acc.exists(p.getName())) {
-							acc.create(p.getName());
-						}
-						if (acc.exists(p.getName())) {
-							double price = agent.getPrice();
-							if (acc.get(p.getName()).getHoldings().hasEnough(price)) {
-								if(owner.isEmpty()) {
-									acc.get(p.getName()).getHoldings().subtract(price);
-									SimpleRegionMarket.sellRegion(region, p);
-									SimpleRegionMarket.outputDebug(p, "You successfully buyed the region " + region.getId() + ".");
-								} else {
-									if (!acc.exists(owner)) {
-										acc.create(owner);
-									}
-									if (acc.exists(owner)) {
-										acc.get(p.getName()).getHoldings().subtract(price);
-										acc.get(owner).getHoldings().add(price);
+							String owner = agent.getOwner();
+							if (!SimpleRegionMarket.getEconomicManager().hasAccount(p.getName())) {
+								SimpleRegionMarket.getEconomicManager().createAccount(p.getName());
+							}
+							if (SimpleRegionMarket.getEconomicManager().hasAccount(p.getName())) {
+								double price = agent.getPrice();
+								if (SimpleRegionMarket.getEconomicManager().getAccount(p.getName()).hasEnough(price)) {
+									if(owner.isEmpty()) {
+										SimpleRegionMarket.getEconomicManager().getAccount(p.getName()).subtract(price);
 										SimpleRegionMarket.sellRegion(region, p);
-										SimpleRegionMarket.outputDebug(p, "You successfully buyed the region " + region.getId() + " from " + owner + ".");
+										SimpleRegionMarket.outputDebug(p, "You successfully buyed the region " + region.getId() + ".");
 									} else {
-										SimpleRegionMarket.outputError(p, "There was a problem with transfering the money.");
-										SimpleRegionMarket.outputConsole("Error: Couldn't create economy account '" + owner + "'.");
+										if (!SimpleRegionMarket.getEconomicManager().hasAccount(owner)) {
+											SimpleRegionMarket.getEconomicManager().createAccount(owner);
+										}
+										if (SimpleRegionMarket.getEconomicManager().hasAccount(owner)) {
+											SimpleRegionMarket.getEconomicManager().getAccount(p.getName()).subtract(price);
+											SimpleRegionMarket.getEconomicManager().getAccount(owner).add(price);
+											SimpleRegionMarket.sellRegion(region, p);
+											SimpleRegionMarket.outputDebug(p, "You successfully buyed the region " + region.getId() + " from " + owner + ".");
+										} else {
+											SimpleRegionMarket.outputError(p, "There was a problem with transfering the money.");
+											SimpleRegionMarket.outputConsole("Error: Couldn't create economy account '" + owner + "'.");
+										}
 									}
+								} else {
+									SimpleRegionMarket.outputError(p, SimpleRegionMarket.ERR_MONEY);
 								}
 							} else {
-								SimpleRegionMarket.outputError(p, SimpleRegionMarket.ERR_MONEY);
+								SimpleRegionMarket.outputError(p, "There was a problem with transfering the money.");
+								SimpleRegionMarket.outputConsole("Error: Couldn't create economy account '" + p.getName() + "'.");
 							}
-						} else {
-							SimpleRegionMarket.outputError(p, "There was a problem with transfering the money.");
-							SimpleRegionMarket.outputConsole("Error: Couldn't create economy account '" + p.getName() + "'.");
+						}
+					} else {
+						if(event.getPlayer() != null) {
+							SimpleRegionMarket.outputError(event.getPlayer(), "The economic system was not found, please tell the server owner");
 						}
 					}
 				}

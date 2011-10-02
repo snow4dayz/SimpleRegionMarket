@@ -13,13 +13,12 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.iCo6.iConomy;
+import com.nijikokun.register.payment.*;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class SimpleRegionMarket extends JavaPlugin {
 	private static Server server;
-	private static iConomy economy;
 	private static ConfigHandler configuration;
 	private static AgentManager agentmanager;
 	
@@ -46,6 +45,15 @@ public class SimpleRegionMarket extends JavaPlugin {
 
 		return (WorldGuardPlugin) plugin;
 	}
+	
+	public static Method getEconomicManager() {
+		if(Methods.hasMethod()) {
+			return Methods.getMethod();
+		} else {
+			outputConsole("Error: Economic System was not found.");
+			return null;
+		}
+	}
 
 	public static boolean canBuy(Player player) {
 		return (player.hasPermission("simpleregionmarket.buy") || canSell(player) || isAdmin(player));
@@ -64,7 +72,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 			Player powner;
 			powner = Bukkit.getPlayerExact(player);
 			if (powner != null) {
-				SimpleRegionMarket.outputDebug(powner, "The region " + region.getId() + " was sold to " + p.getName() + ".");
+				outputDebug(powner, "The region " + region.getId() + " was sold to " + p.getName() + ".");
 			}
 			region.getOwners().removePlayer(player);
 		}
@@ -154,7 +162,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 				if (!first) {
 					string += " | ";
 				}
-				string += agent.getRegion() + " - " + iConomy.format(agent.getPrice());
+				string += agent.getRegion() + " - " + getEconomicManager().format(agent.getPrice());
 				if (string.length() > 80) {
 					outputDebug(p, string);
 					first = true;
@@ -186,19 +194,10 @@ public class SimpleRegionMarket extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		server = getServer();
-
-		economy = (iConomy) server.getPluginManager().getPlugin("iConomy");
 		
 		if (getWorldGuard() == null) {
 			ERROR = true;
 			outputConsole("Error: WorldGuard was not found.");
-			server.getPluginManager().disablePlugin(this);
-			return;
-		}
-		
-		if (economy == null) {
-			ERROR = true;
-			outputConsole("Error: iConomy 6 was not found.");
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}

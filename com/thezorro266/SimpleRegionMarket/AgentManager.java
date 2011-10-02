@@ -6,7 +6,6 @@ import java.util.Iterator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.iCo6.iConomy;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
@@ -130,7 +129,7 @@ public class AgentManager {
 					if (prices.get(i) != old) {
 						if(p != null) {
 							SimpleRegionMarket.outputError(p, "There were found some signs, which don't have the same price.");
-							SimpleRegionMarket.outputError(p, "Region " + region.getId() + ", price " + iConomy.format(old) + " and " + iConomy.format(prices.get(i)));
+							SimpleRegionMarket.outputError(p, "Region " + region.getId() + ", price " + SimpleRegionMarket.getEconomicManager().format(old) + " and " + SimpleRegionMarket.getEconomicManager().format(prices.get(i)));
 						}
 						return -1;
 					}
