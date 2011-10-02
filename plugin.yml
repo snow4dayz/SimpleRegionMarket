@@ -1,0 +1,17 @@
+name: SimpleRegionMarket
+version: 1.0
+main: com.thezorro266.SimpleRegionMarket.SimpleRegionMarket
+permissions:
+  simpleregionmarket.admin:
+    default: op
+  simpleregionmarket.buy:
+    default: false
+  simpleregionmarket.sell:
+    default: false
+commands:
+  rm:
+    description: SimpleRegionMarket benutzen
+    usage: /rm ? | list
+  regionmarket:
+    description: SimpleRegionMarket benutzen
+    usage: /regionmarket ? | list
