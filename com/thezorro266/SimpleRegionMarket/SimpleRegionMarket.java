@@ -13,7 +13,8 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.nijikokun.register.payment.*;
+import com.nijikokun.register.payment.Method;
+import com.nijikokun.register.payment.Methods;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
@@ -28,6 +29,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 	public static int ERR_NOOWN = 1;
 	public static int ERR_MONEY = 2;
 	public static int ERR_OWN = 3;
+	public static int ERR_NOPERM = 4;
 
 	public static boolean saveAll() {
 		return configuration.save();
@@ -102,6 +104,8 @@ public class SimpleRegionMarket extends JavaPlugin {
 			outputError(p, "You don't have enough money.");
 		if (errorID == ERR_OWN)
 			outputError(p, "You own this region.");
+		if (errorID == ERR_NOPERM)
+			outputError(p, "You are not allowed to do that.");
 	}
 
 	private BListener blockListener = new BListener();
@@ -171,6 +175,24 @@ public class SimpleRegionMarket extends JavaPlugin {
 				}
 			}
 			outputDebug(p, string);
+		} else if (args[0].equalsIgnoreCase("maxregions")) {
+			if(isAdmin(p)) {
+				int maxregions;
+				if(args.length <= 1) {
+					outputDebug(p, "Max Regions: " + AgentManager.MAX_REGIONS + " - Use /rm maxregions [VALUE] to set Max Regions for all players.");
+					return true;
+				}
+				try {
+					maxregions = Integer.parseInt(args[1]);
+				} catch (Exception e) {
+					outputError(p, "Use /rm maxregions [VALUE] to set Max Regions for all players.");
+					return true;
+				}
+				AgentManager.MAX_REGIONS = maxregions;
+				outputDebug(p, "Max Regions for all players set to " + maxregions + ".");
+			} else {
+				outputError(p, ERR_NOPERM);
+			}
 		} else {
 			return false;
 		}
@@ -210,7 +232,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 
 		agentmanager = new AgentManager();
 
-		configuration = new ConfigHandler(getDataFolder() + File.separator + "agents.yml");
+		configuration = new ConfigHandler(getDataFolder() + File.separator);
 
 		if (!configuration.load()) {
 			outputConsole("I did not found any agents in the configuration.");

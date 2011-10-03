@@ -7,39 +7,50 @@ import org.bukkit.Location;
 import org.bukkit.util.config.Configuration;
 
 public class ConfigHandler {
-	private static File file;
+	private static File agents;
+	private static File config;
 
 	public ConfigHandler(String path) {
-		file = new File(path);
+		agents = new File(path + "agents.yml");
+		config = new File(path + "config.yml");
 	}
 
 	public boolean load() {
-		Configuration config;
+		Configuration confighandle;
 		try {
-			config = new Configuration(file);
+			confighandle = new Configuration(config);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		config.load();
+		confighandle.load();
+		AgentManager.MAX_REGIONS = confighandle.getInt("maxregions", 0);
+		
+		try {
+			confighandle = new Configuration(agents);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		confighandle.load();
 		boolean ret = false;
 		String path;
-		for (String world : config.getKeys()) {
+		for (String world : confighandle.getKeys()) {
 			path = world;
-			for (String region : config.getKeys(path)) {
+			for (String region : confighandle.getKeys(path)) {
 				path += "." + region;
-				for (String signnr : config.getKeys(path)) {
+				for (String signnr : confighandle.getKeys(path)) {
 					path += "." + signnr;
-					String besitzer = config.getString(path + ".Owner");
-					double preis = config.getDouble(path + ".Price", 0);
+					String besitzer = confighandle.getString(path + ".Owner");
+					double preis = confighandle.getDouble(path + ".Price", 0);
 					if (preis >= 0) {
 						ret = true;
 						SimpleRegionMarket.getAgentManager().getAgentList().add(new RegionAgent(region,
 								new Location(
 										Bukkit.getWorld(world),
-										config.getDouble(path + ".X", 0),
-										config.getDouble(path + ".Y", 0),
-										config.getDouble(path + ".Z", 0)),
+										confighandle.getDouble(path + ".X", 0),
+										confighandle.getDouble(path + ".Y", 0),
+										confighandle.getDouble(path + ".Z", 0)),
 								besitzer, preis));
 					}
 				}
@@ -51,28 +62,37 @@ public class ConfigHandler {
 	public boolean save() {
 		SimpleRegionMarket.getAgentManager().checkAgents();
 
-		Configuration config;
+		Configuration confighandle;
 		try {
-			config = new Configuration(file);
+			confighandle = new Configuration(config);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		confighandle.setProperty("maxregions", AgentManager.MAX_REGIONS);
+		confighandle.save();
+		
+		try {
+			confighandle = new Configuration(agents);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		boolean ret = false;
-		if (config != null) {
+		if (confighandle != null) {
 			int i = 0;
 			String path;
 			for (RegionAgent obj : SimpleRegionMarket.getAgentManager().getAgentList()) {
 				Location loc = obj.getLocation();
 				path = loc.getWorld().getName() + "." + obj.getRegion() + "." + Integer.toString(i);
-				config.setProperty(path + ".X", loc.getX());
-				config.setProperty(path + ".Y", loc.getY());
-				config.setProperty(path + ".Z", loc.getZ());
-				config.setProperty(path + ".Owner", obj.getOwner());
-				config.setProperty(path + ".Price", obj.getPrice());
+				confighandle.setProperty(path + ".X", loc.getX());
+				confighandle.setProperty(path + ".Y", loc.getY());
+				confighandle.setProperty(path + ".Z", loc.getZ());
+				confighandle.setProperty(path + ".Owner", obj.getOwner());
+				confighandle.setProperty(path + ".Price", obj.getPrice());
 				i++;
 			}
-			config.save();
+			confighandle.save();
 			ret = true;
 		}
 		return ret;

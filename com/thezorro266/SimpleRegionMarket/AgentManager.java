@@ -12,6 +12,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 public class AgentManager {
 
 	private ArrayList<RegionAgent> agents = new ArrayList<RegionAgent>();
+	
+	public static int MAX_REGIONS = 0;
 
 	public boolean addAgent(ProtectedRegion region, Location loc, Player p, double price) {
 		if (region != null) {

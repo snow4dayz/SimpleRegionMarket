@@ -1,5 +1,5 @@
 name: SimpleRegionMarket
-version: 1.0
+version: 1.2
 main: com.thezorro266.SimpleRegionMarket.SimpleRegionMarket
 permissions:
   simpleregionmarket.admin:
@@ -11,7 +11,7 @@ permissions:
 commands:
   rm:
     description: SimpleRegionMarket benutzen
-    usage: /rm ? | list
+    usage: /rm ? | list | maxregions
   regionmarket:
     description: SimpleRegionMarket benutzen
-    usage: /regionmarket ? | list
+    usage: /regionmarket ? | list | maxregions
