@@ -38,9 +38,9 @@ public class ConfigHandler {
 		for (String world : confighandle.getKeys()) {
 			path = world;
 			for (String region : confighandle.getKeys(path)) {
-				path += "." + region;
+				path = world + "." + region;
 				for (String signnr : confighandle.getKeys(path)) {
-					path += "." + signnr;
+					path = world + "." + region + "." + signnr;
 					String besitzer = confighandle.getString(path + ".Owner");
 					double preis = confighandle.getDouble(path + ".Price", 0);
 					if (preis >= 0) {

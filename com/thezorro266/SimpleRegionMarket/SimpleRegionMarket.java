@@ -217,9 +217,16 @@ public class SimpleRegionMarket extends JavaPlugin {
 	public void onEnable() {
 		server = getServer();
 		
-		if (getWorldGuard() == null) {
+		if(getWorldGuard() == null) {
 			ERROR = true;
 			outputConsole("Error: WorldGuard was not found.");
+			server.getPluginManager().disablePlugin(this);
+			return;
+		}
+		
+		if(server.getPluginManager().getPlugin("Register") == null) {
+			ERROR = true;
+			outputConsole("Error: Register was not found.");
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}
