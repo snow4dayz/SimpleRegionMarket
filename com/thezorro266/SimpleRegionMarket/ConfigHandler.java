@@ -60,8 +60,6 @@ public class ConfigHandler {
 	}
 
 	public boolean save() {
-		SimpleRegionMarket.getAgentManager().checkAgents();
-
 		Configuration confighandle;
 		try {
 			confighandle = new Configuration(config);

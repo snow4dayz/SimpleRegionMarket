@@ -35,7 +35,8 @@ public class AgentManager {
 		while(itr.hasNext()) {
 			RegionAgent obj = (RegionAgent) itr.next(); 
 			if (obj.getWorldWorld() == null) {
-				SimpleRegionMarket.outputConsole("Check: World " + obj.getWorld() + " doesn't exist anymore. Deleted Sign.");
+				obj.destroyAgent(false);
+				itr.remove();
 			} else if(obj.getProtectedRegion() == null) {
 				obj.destroyAgent(false);
 				itr.remove();
