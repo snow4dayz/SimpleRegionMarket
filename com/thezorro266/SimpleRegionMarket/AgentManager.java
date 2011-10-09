@@ -34,10 +34,9 @@ public class AgentManager {
 		Iterator<RegionAgent> itr = getAgentList().iterator();
 		while(itr.hasNext()) {
 			RegionAgent obj = itr.next();
-			if (obj.getWorldWorld() == null) {
-				obj.destroyAgent(false);
+			if (obj.getWorldWorld() == null) { // world removed - remove agents from AgentList
 				itr.remove();
-			} else if(obj.getProtectedRegion() == null) {
+			} else if(obj.getProtectedRegion() == null) { // region removed - remove agents from region
 				obj.destroyAgent(false);
 				itr.remove();
 				ArrayList<String> list = new ArrayList<String>();
