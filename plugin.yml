@@ -1,17 +1,26 @@
 name: SimpleRegionMarket
-version: 1.2
+version: 1.3
+author: theZorro266
+website: http://forums.bukkit.org/threads/39672/
 main: com.thezorro266.SimpleRegionMarket.SimpleRegionMarket
+depend: [WorldGuard, Register]
+
+commands:
+  regionmarket:
+    description: Using SimpleRegionMarket
+    aliases: rm
+    usage: /regionmarket ? | list | maxregions | lang
+
 permissions:
+  simpleregionmarket.*:
+    description: Admin commands, Buying/Selling regions
+    children:
+      simpleregionmarket.admin: false
+      simpleregionmarket.buy: true
+      simpleregionmarket.sell: true
   simpleregionmarket.admin:
     default: op
   simpleregionmarket.buy:
     default: false
   simpleregionmarket.sell:
     default: false
-commands:
-  rm:
-    description: SimpleRegionMarket benutzen
-    usage: /rm ? | list | maxregions
-  regionmarket:
-    description: SimpleRegionMarket benutzen
-    usage: /regionmarket ? | list | maxregions
