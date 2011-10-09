@@ -29,7 +29,6 @@ public class LanguageHandler {
 						"ERR_ECO_TRANSFER: 'There was a problem with transfering the money.'" + nl +
 						"ERR_NO_ECO_USER: 'The economic system was not found, please tell the server owner.'" + nl +
 						"ERR_CREATE_ECO_ACCOUNT: 'Error: Could not create economy account \"$0\".'" + nl +
-						"PLUGIN_LOADING: 'OK: All plugins found, SimpleRegionMarket is loading..'" + nl +
 						"CONFIG_SAVED: 'Config saved successfully.'" + nl +
 						"ERR_CONFIG_NOT_SAVED: 'Error: Config was not saved successfully.'" + nl +
 						"PLUGIN_UNLOAD: 'Plugin successfully unloaded.'" + nl +

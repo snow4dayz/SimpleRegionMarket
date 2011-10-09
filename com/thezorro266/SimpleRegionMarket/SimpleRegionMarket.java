@@ -218,6 +218,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		server = getServer();
+		agentmanager = new AgentManager();
 		PLUGIN_DIR = getDataFolder() + File.separator;
 
 		configuration = new ConfigHandler();
@@ -239,13 +240,9 @@ public class SimpleRegionMarket extends JavaPlugin {
 			return;
 		}
 
-		LanguageHandler.outputConsole("PLUGIN_LOADING", null);
-
 		server.getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
 		server.getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
 		server.getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
-
-		agentmanager = new AgentManager();
 
 		System.out.println("SimpleRegionMarket v" + getDescription().getVersion() + " loaded, updated by theZorro266");
 	}
