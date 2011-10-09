@@ -1,5 +1,7 @@
 package com.thezorro266.SimpleRegionMarket;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,13 +39,13 @@ class BListener extends BlockListener {
 					event.setCancelled(true);
 					if (p != null) {
 						agent.destroyAgent(true);
-						SimpleRegionMarket.outputDebug(event.getPlayer(), "Successfully deleted the agent.");
+						LanguageHandler.outputDebug(event.getPlayer(), "AGENT_DELETE", null);
 					}
 					SimpleRegionMarket.getAgentManager().removeAgent(agent);
 					SimpleRegionMarket.saveAll();
 				} else {
 					if(event.getPlayer() != null) {
-						SimpleRegionMarket.outputError(event.getPlayer(), "The economic system was not found, please tell the server owner");
+						LanguageHandler.outputError(event.getPlayer(), "ERR_NO_ECO_USER", null);
 					}
 				}
 			}
@@ -80,7 +82,7 @@ class BListener extends BlockListener {
 				}
 				if (region == null) {
 					if (p != null) {
-						SimpleRegionMarket.outputError(p, SimpleRegionMarket.ERR_NAME);
+						LanguageHandler.outputError(p, "ERR_REGION_NAME", null);
 					}
 					event.setCancelled(true);
 					event.getBlock().setType(Material.AIR);
@@ -90,7 +92,7 @@ class BListener extends BlockListener {
 	
 				if (p != null) {
 					if (!SimpleRegionMarket.getAgentManager().isOwner(p, region) && !SimpleRegionMarket.isAdmin(p)) {
-						SimpleRegionMarket.outputError(p, SimpleRegionMarket.ERR_NOOWN);
+						LanguageHandler.outputError(p, "ERR_REGION_NO_OWNER", null);
 						event.setCancelled(true);
 						event.getBlock().setType(Material.AIR);
 						signloc.getWorld().dropItem(signloc, new ItemStack(Material.SIGN, 1));
@@ -107,7 +109,7 @@ class BListener extends BlockListener {
 					}
 					if (price < 0) {
 						if (p != null) {
-							SimpleRegionMarket.outputError(p, "Price not found.");
+							LanguageHandler.outputError(p, "ERR_NO_PRICE", null);
 						}
 						event.setCancelled(true);
 						event.getBlock().setType(Material.AIR);
@@ -115,20 +117,20 @@ class BListener extends BlockListener {
 						return;
 					}
 				} else {
-					price = Double.parseDouble(event.getLine(2));
 					try {
-						if (price < 0) {
-							if (p != null) {
-								SimpleRegionMarket.outputError(p, "The price can't be under zero.");
-							}
-							event.setCancelled(true);
-							event.getBlock().setType(Material.AIR);
-							signloc.getWorld().dropItem(signloc, new ItemStack(Material.SIGN, 1));
-							return;
-						}
+						price = Double.parseDouble(event.getLine(2));
 					} catch (Exception e) {
 						if (p != null) {
-							SimpleRegionMarket.outputError(p, "Price not found.");
+							LanguageHandler.outputError(p, "ERR_NO_PRICE", null);
+						}
+						event.setCancelled(true);
+						event.getBlock().setType(Material.AIR);
+						signloc.getWorld().dropItem(signloc, new ItemStack(Material.SIGN, 1));
+						return;
+					}
+					if (price < 0) {
+						if (p != null) {
+							LanguageHandler.outputError(p, "ERR_PRICE_UNDER_ZERO", null);
 						}
 						event.setCancelled(true);
 						event.getBlock().setType(Material.AIR);
@@ -149,13 +151,16 @@ class BListener extends BlockListener {
 				if (SimpleRegionMarket.getAgentManager().addAgent(region, signloc, lp, price)) {
 					if (p != null) {
 						if(lp == null) {
-							SimpleRegionMarket.outputDebug(p, "You offer the region for sale by the server.");
+							LanguageHandler.outputDebug(p, "REGION_OFFER_NONE", null);
 						} else {
-							SimpleRegionMarket.outputDebug(p, "You offer your region for sale.");
+							LanguageHandler.outputDebug(p, "REGION_OFFER_USER", null);
 						}
 						SimpleRegionMarket.getAgentManager().getRegionPrice(region, p);
 						if (SimpleRegionMarket.getAgentManager().countAgents(region) > 1) {
-							SimpleRegionMarket.outputDebug(p, "You've got now " + Integer.toString(SimpleRegionMarket.getAgentManager().countAgents(region)) + " agent(s) placed for this region.");
+							
+							ArrayList<String> list = new ArrayList<String>();
+							list.add(Integer.toString(SimpleRegionMarket.getAgentManager().countAgents(region)));
+							LanguageHandler.outputDebug(p, "AGENT_PLACED", list);
 						}
 					}
 					event.setLine(0, "[AGENT]");
@@ -177,7 +182,7 @@ class BListener extends BlockListener {
 					SimpleRegionMarket.saveAll();
 				} else {
 					if (p != null) {
-						SimpleRegionMarket.outputError(p, "The agent couldn't be created.");
+						LanguageHandler.outputError(p, "ERR_PLACE_AGENT", null);
 					}
 					event.setCancelled(true);
 					event.getBlock().setType(Material.AIR);
@@ -186,7 +191,7 @@ class BListener extends BlockListener {
 				}
 			} else {
 				if(event.getPlayer() != null) {
-					SimpleRegionMarket.outputError(event.getPlayer(), "The economic system was not found, please tell the server owner");
+					LanguageHandler.outputError(event.getPlayer(), "ERR_NO_ECO_USER", null);
 				}
 			}
 		}

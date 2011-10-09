@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -30,6 +29,9 @@ public class SimpleRegionMarket extends JavaPlugin {
 	public static int ERR_MONEY = 2;
 	public static int ERR_OWN = 3;
 	public static int ERR_NOPERM = 4;
+	
+	public static String PLUGIN_DIR = null;
+	public static String LANGUAGE = null;
 
 	public static boolean saveAll() {
 		return configuration.save();
@@ -52,7 +54,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 		if(Methods.hasMethod()) {
 			return Methods.getMethod();
 		} else {
-			outputConsole("Error: Economic System was not found.");
+			LanguageHandler.outputConsole("ERR_NO_ECO", null);
 			return null;
 		}
 	}
@@ -74,7 +76,10 @@ public class SimpleRegionMarket extends JavaPlugin {
 			Player powner;
 			powner = Bukkit.getPlayerExact(player);
 			if (powner != null) {
-				outputDebug(powner, "The region " + region.getId() + " was sold to " + p.getName() + ".");
+				ArrayList<String> list = new ArrayList<String>();
+				list.add(region.getId());
+				list.add(p.getName());
+				LanguageHandler.outputDebug(powner, "REGION_SOLD", list);
 			}
 			region.getOwners().removePlayer(player);
 		}
@@ -82,32 +87,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 		region.getOwners().addPlayer(getWorldGuard().wrapPlayer(p));
 		saveAll();
 	}
-
-	public static void outputConsole(String output) {
-		System.out.println("[SimpleRegionMarket] " + output);
-	}
-
-	public static void outputDebug(Player p, String s) {
-		p.sendMessage(ChatColor.AQUA + "[SimpleRegionMarket] " + ChatColor.YELLOW + s);
-	}
-
-	public static void outputError(Player p, String s) {
-		p.sendMessage(ChatColor.AQUA + "[SimpleRegionMarket] " + ChatColor.RED + s);
-	}
-
-	public static void outputError(Player p, int errorID) {
-		if (errorID == ERR_NAME)
-			outputError(p, "There is no region with this name.");
-		if (errorID == ERR_NOOWN)
-			outputError(p, "You don't own this region.");
-		if (errorID == ERR_MONEY)
-			outputError(p, "You don't have enough money.");
-		if (errorID == ERR_OWN)
-			outputError(p, "You own this region.");
-		if (errorID == ERR_NOPERM)
-			outputError(p, "You are not allowed to do that.");
-	}
-
+	
 	private BListener blockListener = new BListener();
 
 	private PListener playerListener = new PListener();
@@ -126,21 +106,20 @@ public class SimpleRegionMarket extends JavaPlugin {
 		if (args[0].equalsIgnoreCase("?")) {
 			if(canBuy(p)) {
 				if(canSell(p)) {
-					outputDebug(p, "To sell a region you need to place a sign on it.");
-					outputDebug(p, "In the first line of the sign should be '[AGENT]',");
+					LanguageHandler.outputDebug(p, "HELP_01", null);
+					LanguageHandler.outputDebug(p, "HELP_02", null);
+					LanguageHandler.outputDebug(p, "HELP_03", null);
 					if(isAdmin(p)) {
-						outputDebug(p, "in the second line the name of the region (if there is more than one region at that location),");
-						outputDebug(p, "in the third line there should be the price (if there is not already a sign with a given price)");
-						outputDebug(p, "and in the last line there can be a 'none' that the money does not go to you, but to the server.");
+						LanguageHandler.outputDebug(p, "HELP_ADM_01", null);
+						LanguageHandler.outputDebug(p, "HELP_ADM_02", null);
 					} else {
-						outputDebug(p, "in the second line the name of the region (if there is more than one region at that location)");
-						outputDebug(p, "and in the third line there should be the price (if there is not already a sign with a given price).");
+						LanguageHandler.outputDebug(p, "HELP_04", null);
 					}
-					outputDebug(p, "After successfully creating the sign the last line will be filled with the size of the region.");
+					LanguageHandler.outputDebug(p, "HELP_05", null);
 				}
-				outputDebug(p, "If you want to buy a region, just right-click on the sign.");
+				LanguageHandler.outputDebug(p, "HELP_BUY", null);
 			} else {
-				outputError(p, "You cannot buy or sell a region.");
+				LanguageHandler.outputError(p, "ERR_NO_PERM_BUY_SELL", null);
 			}
 		} else if (args[0].equalsIgnoreCase("list") || args[0].equalsIgnoreCase("l")) {
 			ArrayList<RegionAgent> list = new ArrayList<RegionAgent>();
@@ -168,30 +147,54 @@ public class SimpleRegionMarket extends JavaPlugin {
 				}
 				string += agent.getRegion() + " - " + getEconomicManager().format(agent.getPrice());
 				if (string.length() > 80) {
-					outputDebug(p, string);
+					LanguageHandler.outputString(p, string);
+					string = "";
 					first = true;
 				} else {
 					first = false;
 				}
 			}
-			outputDebug(p, string);
+			LanguageHandler.outputString(p, string);
 		} else if (args[0].equalsIgnoreCase("maxregions")) {
 			if(isAdmin(p)) {
 				int maxregions;
-				if(args.length <= 1) {
-					outputDebug(p, "Max Regions: " + AgentManager.MAX_REGIONS + " - Use /rm maxregions [VALUE] to set Max Regions for all players.");
+				if(args.length < 2) {
+					ArrayList<String> list = new ArrayList<String>();
+					list.add(Integer.toString(AgentManager.MAX_REGIONS));
+					LanguageHandler.outputDebug(p, "CMD_MAXREGIONS_NO_ARG", list);
 					return true;
 				}
 				try {
 					maxregions = Integer.parseInt(args[1]);
 				} catch (Exception e) {
-					outputError(p, "Use /rm maxregions [VALUE] to set Max Regions for all players.");
+					LanguageHandler.outputError(p, "CMD_MAXREGIONS_WRONG_ARG", null);
 					return true;
 				}
 				AgentManager.MAX_REGIONS = maxregions;
-				outputDebug(p, "Max Regions for all players set to " + maxregions + ".");
+				ArrayList<String> list = new ArrayList<String>();
+				list.add(Integer.toString(maxregions));
+				LanguageHandler.outputDebug(p, "CMD_MAXREGIONS", list);
 			} else {
-				outputError(p, ERR_NOPERM);
+				LanguageHandler.outputError(p, "ERR_NO_PERM", null);
+			}
+		} else if (args[0].equalsIgnoreCase("lang")) {
+			if(isAdmin(p)) {
+				if(args.length < 2) {
+					ArrayList<String> list = new ArrayList<String>();
+					list.add(LANGUAGE);
+					LanguageHandler.outputDebug(p, "CMD_LANG_NO_ARG", list);
+				} else {
+					if(LanguageHandler.setLang(args[1])) {
+						LANGUAGE = args[1];
+						ArrayList<String> list = new ArrayList<String>();
+						list.add(LANGUAGE);
+						LanguageHandler.outputDebug(p, "CMD_LANG_SWITCHED", list);
+					} else {
+						LanguageHandler.outputError(p, "CMD_LANG_NO_LANG", null);
+					}
+				}
+			} else {
+				LanguageHandler.outputError(p, "ERR_NO_PERM", null);
 			}
 		} else {
 			return false;
@@ -202,36 +205,42 @@ public class SimpleRegionMarket extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if(ERROR) {
-			outputConsole("Plugin unloaded. There was an error with the other plugins.");
+			LanguageHandler.outputConsole("ERR_PLUGIN_UNLOAD", null);
 		} else {
 			if (saveAll()) {
-				outputConsole("Config saved successfully.");
+				LanguageHandler.outputConsole("CONFIG_SAVED", null);
 			} else {
-				outputConsole("Error: Config wasn't saved successfully.");
+				LanguageHandler.outputConsole("ERR_CONFIG_NOT_SAVED", null);
 			}
-			outputConsole("Plugin successfully unloaded.");
+			LanguageHandler.outputConsole("PLUGIN_UNLOAD", null);
 		}
 	}
 
 	@Override
 	public void onEnable() {
 		server = getServer();
+		PLUGIN_DIR = getDataFolder() + File.separator;
+
+		configuration = new ConfigHandler();
+		configuration.load();
 		
-		if(getWorldGuard() == null) {
+		LanguageHandler.setLang(LANGUAGE);
+		
+		if (getWorldGuard() == null) {
 			ERROR = true;
-			outputConsole("Error: WorldGuard was not found.");
+			LanguageHandler.outputConsole("ERR_NO_WORLDGUARD", null);
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}
 		
 		if(server.getPluginManager().getPlugin("Register") == null) {
 			ERROR = true;
-			outputConsole("Error: Register was not found.");
+			LanguageHandler.outputConsole("ERR_NO_REGISTER", null);
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}
-
-		outputConsole("OK: All plugins found, SimpleRegionMarket is loading..");
+		
+		LanguageHandler.outputConsole("PLUGIN_LOADING", null);
 
 		server.getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
 		server.getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
@@ -239,12 +248,6 @@ public class SimpleRegionMarket extends JavaPlugin {
 
 		agentmanager = new AgentManager();
 
-		configuration = new ConfigHandler(getDataFolder() + File.separator);
-
-		if (!configuration.load()) {
-			outputConsole("I did not found any agents in the configuration.");
-		}
-
-		outputConsole("Successfully v" + getDescription().getVersion() + " loaded, updated by theZorro266");
+		System.out.println("SimpleRegionMarket v" + getDescription().getVersion() + " loaded, updated by theZorro266");
 	}
 }

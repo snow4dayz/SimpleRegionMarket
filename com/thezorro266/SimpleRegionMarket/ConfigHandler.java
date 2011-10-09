@@ -10,9 +10,9 @@ public class ConfigHandler {
 	private static File agents;
 	private static File config;
 
-	public ConfigHandler(String path) {
-		agents = new File(path + "agents.yml");
-		config = new File(path + "config.yml");
+	public ConfigHandler() {
+		agents = new File(SimpleRegionMarket.PLUGIN_DIR + "agents.yml");
+		config = new File(SimpleRegionMarket.PLUGIN_DIR + "config.yml");
 	}
 
 	public boolean load() {
@@ -25,6 +25,7 @@ public class ConfigHandler {
 		}
 		confighandle.load();
 		AgentManager.MAX_REGIONS = confighandle.getInt("maxregions", 0);
+		SimpleRegionMarket.LANGUAGE = confighandle.getString("language", "en");
 		
 		try {
 			confighandle = new Configuration(agents);
@@ -68,6 +69,7 @@ public class ConfigHandler {
 			return false;
 		}
 		confighandle.setProperty("maxregions", AgentManager.MAX_REGIONS);
+		confighandle.setProperty("language", SimpleRegionMarket.LANGUAGE);
 		confighandle.save();
 		
 		try {

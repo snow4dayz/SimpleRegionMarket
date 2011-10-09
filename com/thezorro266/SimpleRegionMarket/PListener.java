@@ -1,5 +1,7 @@
 package com.thezorro266.SimpleRegionMarket;
 
+import java.util.ArrayList;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ class PListener extends PlayerListener {
 								int count = 0;
 								count = SimpleRegionMarket.getWorldGuard().getRegionManager(b.getWorld()).getRegionCountOfPlayer(SimpleRegionMarket.getWorldGuard().wrapPlayer(p));
 								if(count >= AgentManager.MAX_REGIONS && !SimpleRegionMarket.isAdmin(p)) {
-									SimpleRegionMarket.outputError(p, "You have reached your limit of regions on this world.");
+									LanguageHandler.outputError(p, "ERR_REGION_LIMIT", null);
 									return;
 								}
 							}
@@ -38,16 +40,16 @@ class PListener extends PlayerListener {
 							ProtectedRegion region = SimpleRegionMarket.getWorldGuard().getRegionManager(b.getWorld()).getRegion(agent.getRegion());
 							
 							if(!SimpleRegionMarket.canBuy(p)) {
-								SimpleRegionMarket.outputError(p, "You don't have the permission to buy a region.");
+								LanguageHandler.outputError(p, "ERR_NO_PERM_BUY", null);
 							} else if (SimpleRegionMarket.getAgentManager().isOwner(p, region)) {
 								if(agent.getOwnerPlayer() != null) {
 									if(p.equals(agent.getOwnerPlayer())) {
-										SimpleRegionMarket.outputDebug(p, "This is your agent.");
+										LanguageHandler.outputDebug(p, "AGENT_YOURS", null);
 									} else {
-										SimpleRegionMarket.outputDebug(p, "You cannot buy this region, because it's yours.");
+										LanguageHandler.outputDebug(p, "ERR_REGION_BUY_YOURS", null);
 									}
 								} else {
-									SimpleRegionMarket.outputDebug(p, "You cannot buy this region, because it's yours.");
+									LanguageHandler.outputDebug(p, "ERR_REGION_BUY_YOURS", null);
 								}
 							} else {
 								String owner = agent.getOwner();
@@ -60,7 +62,9 @@ class PListener extends PlayerListener {
 										if(owner.isEmpty()) {
 											SimpleRegionMarket.getEconomicManager().getAccount(p.getName()).subtract(price);
 											SimpleRegionMarket.sellRegion(region, p);
-											SimpleRegionMarket.outputDebug(p, "You successfully buyed the region " + region.getId() + ".");
+											ArrayList<String> list = new ArrayList<String>();
+											list.add(region.getId());
+											LanguageHandler.outputDebug(p, "REGION_BUYED_NONE", list);
 										} else {
 											if (!SimpleRegionMarket.getEconomicManager().hasAccount(owner)) {
 												SimpleRegionMarket.getEconomicManager().createAccount(owner);
@@ -69,23 +73,30 @@ class PListener extends PlayerListener {
 												SimpleRegionMarket.getEconomicManager().getAccount(p.getName()).subtract(price);
 												SimpleRegionMarket.getEconomicManager().getAccount(owner).add(price);
 												SimpleRegionMarket.sellRegion(region, p);
-												SimpleRegionMarket.outputDebug(p, "You successfully buyed the region " + region.getId() + " from " + owner + ".");
+												ArrayList<String> list = new ArrayList<String>();
+												list.add(region.getId());
+												list.add(owner);
+												LanguageHandler.outputDebug(p, "REGION_BUYED_USER", list);
 											} else {
-												SimpleRegionMarket.outputError(p, "There was a problem with transfering the money.");
-												SimpleRegionMarket.outputConsole("Error: Couldn't create economy account '" + owner + "'.");
+												LanguageHandler.outputError(p, "ERR_ECO_TRANSFER", null);
+												ArrayList<String> list = new ArrayList<String>();
+												list.add(owner);
+												LanguageHandler.outputConsole("ERR_CREATE_ECO_ACCOUNT", list);
 											}
 										}
 									} else {
-										SimpleRegionMarket.outputError(p, SimpleRegionMarket.ERR_MONEY);
+										LanguageHandler.outputError(p, "ERR_NO_MONEY", null);
 									}
 								} else {
-									SimpleRegionMarket.outputError(p, "There was a problem with transfering the money.");
-									SimpleRegionMarket.outputConsole("Error: Couldn't create economy account '" + p.getName() + "'.");
+									LanguageHandler.outputError(p, "ERR_ECO_TRANSFER", null);
+									ArrayList<String> list = new ArrayList<String>();
+									list.add(p.getName());
+									LanguageHandler.outputConsole("ERR_CREATE_ECO_ACCOUNT", list);
 								}
 							}
 						} else {
 							if(event.getPlayer() != null) {
-								SimpleRegionMarket.outputError(event.getPlayer(), "The economic system was not found, please tell the server owner");
+								LanguageHandler.outputError(event.getPlayer(), "ERR_NO_ECO_USER", null);
 							}
 						}
 					}

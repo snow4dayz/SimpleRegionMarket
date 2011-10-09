@@ -40,7 +40,9 @@ public class AgentManager {
 			} else if(obj.getProtectedRegion() == null) {
 				obj.destroyAgent(false);
 				itr.remove();
-				SimpleRegionMarket.outputConsole("Check: Region " + obj.getRegion() + " doesn't exist anymore. Deleted Sign.");
+				ArrayList<String> list = new ArrayList<String>();
+				list.add(obj.getRegion());
+				LanguageHandler.outputConsole("ERR_REGION_DELETE", list);
 			}
 		}
 	}
@@ -131,8 +133,12 @@ public class AgentManager {
 				for (int i = 0; i < prices.size(); i++) {
 					if (prices.get(i) != old) {
 						if(p != null) {
-							SimpleRegionMarket.outputError(p, "There were found some signs, which don't have the same price.");
-							SimpleRegionMarket.outputError(p, "Region " + region.getId() + ", price " + SimpleRegionMarket.getEconomicManager().format(old) + " and " + SimpleRegionMarket.getEconomicManager().format(prices.get(i)));
+							LanguageHandler.outputError(p, "ERR_REGION_PRICE", null);
+							ArrayList<String> list = new ArrayList<String>();
+							list.add(region.getId());
+							list.add(SimpleRegionMarket.getEconomicManager().format(old));
+							list.add(SimpleRegionMarket.getEconomicManager().format(prices.get(i)));
+							LanguageHandler.outputError(p, "ERR_REGION_PRICE_SHOW", list);
 						}
 						return -1;
 					}
