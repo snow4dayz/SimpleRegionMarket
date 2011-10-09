@@ -26,7 +26,7 @@ public class ConfigHandler {
 		confighandle.load();
 		AgentManager.MAX_REGIONS = confighandle.getInt("maxregions", 0);
 		SimpleRegionMarket.LANGUAGE = confighandle.getString("language", "en");
-		
+
 		try {
 			confighandle = new Configuration(agents);
 		} catch (Exception e) {
@@ -52,7 +52,7 @@ public class ConfigHandler {
 										confighandle.getDouble(path + ".X", 0),
 										confighandle.getDouble(path + ".Y", 0),
 										confighandle.getDouble(path + ".Z", 0)),
-								besitzer, preis));
+										besitzer, preis));
 					}
 				}
 			}
@@ -71,7 +71,7 @@ public class ConfigHandler {
 		confighandle.setProperty("maxregions", AgentManager.MAX_REGIONS);
 		confighandle.setProperty("language", SimpleRegionMarket.LANGUAGE);
 		confighandle.save();
-		
+
 		try {
 			confighandle = new Configuration(agents);
 		} catch (Exception e) {

@@ -24,10 +24,10 @@ class BListener extends BlockListener {
 			if (sign.getLine(0).equalsIgnoreCase("[AGENT]")) {
 				if(SimpleRegionMarket.getEconomicManager() != null) {
 					RegionAgent agent = SimpleRegionMarket.getAgentManager().getAgent(b.getLocation());
-	
+
 					if (agent == null)
 						return;
-	
+
 					Player p = event.getPlayer();
 					ProtectedRegion region = SimpleRegionMarket.getWorldGuard().getRegionManager(b.getLocation().getWorld()).getRegion(agent.getRegion());
 					if (!SimpleRegionMarket.getAgentManager().isOwner(p, region) && !SimpleRegionMarket.isAdmin(p)) {
@@ -35,7 +35,7 @@ class BListener extends BlockListener {
 						sign.update();
 						return;
 					}
-	
+
 					event.setCancelled(true);
 					if (p != null) {
 						agent.destroyAgent(true);
@@ -58,20 +58,20 @@ class BListener extends BlockListener {
 			if(SimpleRegionMarket.getEconomicManager() != null) {
 				ProtectedRegion region;
 				Location signloc = event.getBlock().getLocation();
-				
+
 				RegionAgent oldagent = SimpleRegionMarket.getAgentManager().getAgent(signloc);
 				if(oldagent != null) {
 					SimpleRegionMarket.getAgentManager().getAgentList().remove(oldagent);
 				}
-	
+
 				if (event.getLine(1).isEmpty()) {
 					region = SimpleRegionMarket.getAgentManager().getRegion(signloc);
 				} else {
 					region = SimpleRegionMarket.getWorldGuard().getRegionManager(signloc.getWorld()).getRegion(event.getLine(1));
 				}
-	
+
 				Player p = event.getPlayer();
-	
+
 				if (p != null) {
 					if(!SimpleRegionMarket.canSell(p)) {
 						event.setCancelled(true);
@@ -89,7 +89,7 @@ class BListener extends BlockListener {
 					signloc.getWorld().dropItem(signloc, new ItemStack(Material.SIGN, 1));
 					return;
 				}
-	
+
 				if (p != null) {
 					if (!SimpleRegionMarket.getAgentManager().isOwner(p, region) && !SimpleRegionMarket.isAdmin(p)) {
 						LanguageHandler.outputError(p, "ERR_REGION_NO_OWNER", null);
@@ -99,7 +99,7 @@ class BListener extends BlockListener {
 						return;
 					}
 				}
-	
+
 				double price = 0;
 				if (event.getLine(2).isEmpty()) {
 					if (SimpleRegionMarket.getAgentManager().countAgents(region) > 0) {
@@ -138,7 +138,7 @@ class BListener extends BlockListener {
 						return;
 					}
 				}
-				
+
 				Player lp = p;
 				if (p != null) {
 					if (!SimpleRegionMarket.getAgentManager().isOwner(p, region) || event.getLine(3).equalsIgnoreCase("none")) {
@@ -147,7 +147,7 @@ class BListener extends BlockListener {
 						}
 					}
 				}
-	
+
 				if (SimpleRegionMarket.getAgentManager().addAgent(region, signloc, lp, price)) {
 					if (p != null) {
 						if(lp == null) {
@@ -157,7 +157,7 @@ class BListener extends BlockListener {
 						}
 						SimpleRegionMarket.getAgentManager().getRegionPrice(region, p);
 						if (SimpleRegionMarket.getAgentManager().countAgents(region) > 1) {
-							
+
 							ArrayList<String> list = new ArrayList<String>();
 							list.add(Integer.toString(SimpleRegionMarket.getAgentManager().countAgents(region)));
 							LanguageHandler.outputDebug(p, "AGENT_PLACED", list);

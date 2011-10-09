@@ -3,7 +3,7 @@ version: 1.3
 author: theZorro266
 website: http://forums.bukkit.org/threads/39672/
 main: com.thezorro266.SimpleRegionMarket.SimpleRegionMarket
-depend: [WorldGuard, Register]
+depend: [WorldGuard]
 
 commands:
   regionmarket:

@@ -35,9 +35,8 @@ public class RegionAgent {
 	}
 
 	public Player getOwnerPlayer() {
-		if(!getOwner().isEmpty()) {
+		if(!getOwner().isEmpty())
 			return Bukkit.getPlayerExact(getOwner());
-		}
 		return null;
 	}
 
@@ -60,7 +59,7 @@ public class RegionAgent {
 	public World getWorldWorld() {
 		return getLocation().getWorld();
 	}
-	
+
 	public void destroyAgent(boolean drop) {
 		getLocation().getBlock().setType(Material.AIR);
 		if(drop) {

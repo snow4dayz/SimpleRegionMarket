@@ -22,10 +22,10 @@ class PListener extends PlayerListener {
 					Sign sign = (Sign) b.getState();
 					if (sign.getLine(0).equals("[AGENT]")) {
 						RegionAgent agent = SimpleRegionMarket.getAgentManager().getAgent(b.getLocation());
-						
+
 						if (agent == null)
 							return;
-						
+
 						if(SimpleRegionMarket.getEconomicManager() != null) {
 							Player p = event.getPlayer();
 							if(AgentManager.MAX_REGIONS != 0) {
@@ -36,9 +36,9 @@ class PListener extends PlayerListener {
 									return;
 								}
 							}
-		
+
 							ProtectedRegion region = SimpleRegionMarket.getWorldGuard().getRegionManager(b.getWorld()).getRegion(agent.getRegion());
-							
+
 							if(!SimpleRegionMarket.canBuy(p)) {
 								LanguageHandler.outputError(p, "ERR_NO_PERM_BUY", null);
 							} else if (SimpleRegionMarket.getAgentManager().isOwner(p, region)) {

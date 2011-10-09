@@ -12,7 +12,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 public class AgentManager {
 
 	private ArrayList<RegionAgent> agents = new ArrayList<RegionAgent>();
-	
+
 	public static int MAX_REGIONS = 0;
 
 	public boolean addAgent(ProtectedRegion region, Location loc, Player p, double price) {
@@ -31,9 +31,9 @@ public class AgentManager {
 	}
 
 	public void checkAgents() {
-		Iterator<RegionAgent> itr = getAgentList().iterator(); 
+		Iterator<RegionAgent> itr = getAgentList().iterator();
 		while(itr.hasNext()) {
-			RegionAgent obj = (RegionAgent) itr.next(); 
+			RegionAgent obj = itr.next();
 			if (obj.getWorldWorld() == null) {
 				obj.destroyAgent(false);
 				itr.remove();
@@ -80,13 +80,13 @@ public class AgentManager {
 		}
 		return ret;
 	}
-	
+
 	public int removeAgentsFromRegion(ProtectedRegion region) {
 		int count = 0;
 		if(region != null) {
-			Iterator<RegionAgent> itr = getAgentList().iterator(); 
+			Iterator<RegionAgent> itr = getAgentList().iterator();
 			while(itr.hasNext()) {
-				RegionAgent obj = itr.next(); 
+				RegionAgent obj = itr.next();
 				if(obj.getProtectedRegion() == region) {
 					obj.destroyAgent(false);
 					itr.remove();
@@ -112,14 +112,13 @@ public class AgentManager {
 					highestPrior = region.getPriority();
 				}
 			}
-			
-			if(regions.size() == 1) {
+
+			if(regions.size() == 1)
 				return regions.get(0);
-			}
 		}
 		return null;
 	}
-	
+
 	public double getRegionPrice(ProtectedRegion region, Player p) {
 		if (region != null) {
 			ArrayList<Double> prices = new ArrayList<Double>();

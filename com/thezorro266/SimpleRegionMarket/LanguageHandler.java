@@ -11,7 +11,7 @@ import org.bukkit.util.config.Configuration;
 
 public class LanguageHandler {
 	private static Configuration languagefile;
-	
+
 	public static boolean setLang(String lang) {
 		if(lang == null) {
 			lang = "en";
@@ -78,7 +78,7 @@ public class LanguageHandler {
 				e.printStackTrace();
 			}
 		}
-		
+
 		File choosen_lang = new File(SimpleRegionMarket.PLUGIN_DIR + lang + ".yml");
 		if(choosen_lang.exists()) {
 			try {
@@ -102,14 +102,14 @@ public class LanguageHandler {
 			}
 		}
 	}
-	
+
 	private static String defaultLanguage(String id) {
 		String string = "";
 		if(id != null) {
 		}
 		return string;
 	}
-	
+
 	private static String parseLanguageString(String id, ArrayList<String> args) {
 		String string = "";
 		if(languagefile != null && languagefile.getString(id) != null) {
@@ -117,7 +117,7 @@ public class LanguageHandler {
 		} else {
 			string = defaultLanguage(id);
 		}
-		
+
 		for(int i = string.length()-1; i >= 0; i--) {
 			if(string.charAt(i) == '$') {
 				if(string.charAt(i-1) == '$') {
@@ -130,7 +130,7 @@ public class LanguageHandler {
 						string = string.substring(0, i) + "ERROR ARGUMENT" + string.substring(i+2, string.length());
 						continue;
 					}
-					
+
 					try {
 						string = string.substring(0, i) + args.get(argi) + string.substring(i+2, string.length());
 					} catch (Exception e) {

@@ -21,7 +21,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 	private static Server server;
 	private static ConfigHandler configuration;
 	private static AgentManager agentmanager;
-	
+
 	private boolean ERROR = false;
 
 	public static int ERR_NAME = 0;
@@ -29,14 +29,14 @@ public class SimpleRegionMarket extends JavaPlugin {
 	public static int ERR_MONEY = 2;
 	public static int ERR_OWN = 3;
 	public static int ERR_NOPERM = 4;
-	
+
 	public static String PLUGIN_DIR = null;
 	public static String LANGUAGE = null;
 
 	public static boolean saveAll() {
 		return configuration.save();
 	}
-	
+
 	public static AgentManager getAgentManager() {
 		return agentmanager;
 	}
@@ -49,11 +49,11 @@ public class SimpleRegionMarket extends JavaPlugin {
 
 		return (WorldGuardPlugin) plugin;
 	}
-	
+
 	public static Method getEconomicManager() {
-		if(Methods.hasMethod()) {
+		if(Methods.hasMethod())
 			return Methods.getMethod();
-		} else {
+		else {
 			LanguageHandler.outputConsole("ERR_NO_ECO", null);
 			return null;
 		}
@@ -70,7 +70,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 	public static boolean isAdmin(Player player) {
 		return player.hasPermission("simpleregionmarket.admin");
 	}
-	
+
 	public static void sellRegion(ProtectedRegion region, Player p) {
 		for (String player : region.getOwners().getPlayers()) {
 			Player powner;
@@ -87,7 +87,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 		region.getOwners().addPlayer(getWorldGuard().wrapPlayer(p));
 		saveAll();
 	}
-	
+
 	private BListener blockListener = new BListener();
 
 	private PListener playerListener = new PListener();
@@ -196,9 +196,8 @@ public class SimpleRegionMarket extends JavaPlugin {
 			} else {
 				LanguageHandler.outputError(p, "ERR_NO_PERM", null);
 			}
-		} else {
+		} else
 			return false;
-		}
 		return true;
 	}
 
@@ -223,23 +222,23 @@ public class SimpleRegionMarket extends JavaPlugin {
 
 		configuration = new ConfigHandler();
 		configuration.load();
-		
+
 		LanguageHandler.setLang(LANGUAGE);
-		
+
 		if (getWorldGuard() == null) {
 			ERROR = true;
 			LanguageHandler.outputConsole("ERR_NO_WORLDGUARD", null);
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}
-		
+
 		if(server.getPluginManager().getPlugin("Register") == null) {
 			ERROR = true;
 			LanguageHandler.outputConsole("ERR_NO_REGISTER", null);
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}
-		
+
 		LanguageHandler.outputConsole("PLUGIN_LOADING", null);
 
 		server.getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
