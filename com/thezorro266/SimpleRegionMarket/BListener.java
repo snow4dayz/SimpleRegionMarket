@@ -21,7 +21,7 @@ class BListener extends BlockListener {
 		Block b = event.getBlock();
 		if (b.getTypeId() == 63 || b.getTypeId() == 68) {
 			Sign sign = (Sign) b.getState();
-			if (sign.getLine(0).equalsIgnoreCase("[AGENT]")) {
+			if (sign.getLine(0).equals("[AGENT]")) {
 				if(SimpleRegionMarket.getEconomicManager() != null) {
 					RegionAgent agent = SimpleRegionMarket.getAgentManager().getAgent(b.getLocation());
 

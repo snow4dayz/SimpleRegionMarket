@@ -68,7 +68,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 	}
 
 	public static boolean isAdmin(Player player) {
-		return player.hasPermission("simpleregionmarket.admin");
+		return (player.hasPermission("simpleregionmarket.admin") || player.isOp());
 	}
 
 	public static void sellRegion(ProtectedRegion region, Player p) {
