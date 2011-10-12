@@ -2,6 +2,7 @@ package com.thezorro266.SimpleRegionMarket;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -22,7 +23,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 	private static ConfigHandler configuration;
 	private static AgentManager agentmanager;
 
-	private boolean ERROR = false;
+	private boolean error = false;
 
 	public static int ERR_NAME = 0;
 	public static int ERR_NOOWN = 1;
@@ -30,11 +31,11 @@ public class SimpleRegionMarket extends JavaPlugin {
 	public static int ERR_OWN = 3;
 	public static int ERR_NOPERM = 4;
 
-	public static String PLUGIN_DIR = null;
-	public static String LANGUAGE = null;
+	public static String plugin_dir = null;
+	public static String language = null;
 
-	public static boolean saveAll() {
-		return configuration.save();
+	public static void saveAll() {
+		configuration.save();
 	}
 
 	public static AgentManager getAgentManager() {
@@ -54,7 +55,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 		if(Methods.hasMethod())
 			return Methods.getMethod();
 		else {
-			LanguageHandler.outputConsole("ERR_NO_ECO", null);
+			LanguageHandler.langOutputConsole("ERR_NO_ECO", Level.SEVERE, null);
 			return null;
 		}
 	}
@@ -160,7 +161,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 				int maxregions;
 				if(args.length < 2) {
 					ArrayList<String> list = new ArrayList<String>();
-					list.add(Integer.toString(AgentManager.MAX_REGIONS));
+					list.add(Integer.toString(AgentManager.max_regions));
 					LanguageHandler.outputDebug(p, "CMD_MAXREGIONS_NO_ARG", list);
 					return true;
 				}
@@ -170,7 +171,7 @@ public class SimpleRegionMarket extends JavaPlugin {
 					LanguageHandler.outputError(p, "CMD_MAXREGIONS_WRONG_ARG", null);
 					return true;
 				}
-				AgentManager.MAX_REGIONS = maxregions;
+				AgentManager.max_regions = maxregions;
 				ArrayList<String> list = new ArrayList<String>();
 				list.add(Integer.toString(maxregions));
 				LanguageHandler.outputDebug(p, "CMD_MAXREGIONS", list);
@@ -181,13 +182,13 @@ public class SimpleRegionMarket extends JavaPlugin {
 			if(isAdmin(p)) {
 				if(args.length < 2) {
 					ArrayList<String> list = new ArrayList<String>();
-					list.add(LANGUAGE);
+					list.add(language);
 					LanguageHandler.outputDebug(p, "CMD_LANG_NO_ARG", list);
 				} else {
 					if(LanguageHandler.setLang(args[1])) {
-						LANGUAGE = args[1];
+						language = args[1];
 						ArrayList<String> list = new ArrayList<String>();
-						list.add(LANGUAGE);
+						list.add(language);
 						LanguageHandler.outputDebug(p, "CMD_LANG_SWITCHED", list);
 					} else {
 						LanguageHandler.outputError(p, "CMD_LANG_NO_LANG", null);
@@ -203,15 +204,11 @@ public class SimpleRegionMarket extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if(ERROR) {
-			LanguageHandler.outputConsole("ERR_PLUGIN_UNLOAD", null);
+		if(error) {
+			LanguageHandler.langOutputConsole("ERR_PLUGIN_UNLOAD", Level.SEVERE, null);
 		} else {
-			if (saveAll()) {
-				LanguageHandler.outputConsole("CONFIG_SAVED", null);
-			} else {
-				LanguageHandler.outputConsole("ERR_CONFIG_NOT_SAVED", null);
-			}
-			LanguageHandler.outputConsole("PLUGIN_UNLOAD", null);
+			saveAll();
+			LanguageHandler.langOutputConsole("PLUGIN_UNLOAD", Level.INFO, null);
 		}
 	}
 
@@ -219,31 +216,33 @@ public class SimpleRegionMarket extends JavaPlugin {
 	public void onEnable() {
 		server = getServer();
 		agentmanager = new AgentManager();
-		PLUGIN_DIR = getDataFolder() + File.separator;
+		plugin_dir = getDataFolder() + File.separator;
 
 		configuration = new ConfigHandler();
 		configuration.load();
 
-		LanguageHandler.setLang(LANGUAGE);
+		LanguageHandler.setLang(language);
 
 		if (getWorldGuard() == null) {
-			ERROR = true;
-			LanguageHandler.outputConsole("ERR_NO_WORLDGUARD", null);
+			error = true;
+			LanguageHandler.langOutputConsole("ERR_NO_WORLDGUARD", Level.SEVERE, null);
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}
 
 		if(server.getPluginManager().getPlugin("Register") == null) {
-			ERROR = true;
-			LanguageHandler.outputConsole("ERR_NO_REGISTER", null);
+			error = true;
+			LanguageHandler.langOutputConsole("ERR_NO_REGISTER", Level.SEVERE, null);
 			server.getPluginManager().disablePlugin(this);
 			return;
 		}
+		
+		getAgentManager().checkAgents();
 
 		server.getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
 		server.getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
 		server.getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
-
-		System.out.println("SimpleRegionMarket v" + getDescription().getVersion() + " loaded, updated by theZorro266");
+		
+		LanguageHandler.outputConsole(Level.INFO, "Version " + getDescription().getVersion() + " loaded, updated by theZorro266");
 	}
 }

@@ -1,6 +1,7 @@
 package com.thezorro266.SimpleRegionMarket;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -28,10 +29,10 @@ class PListener extends PlayerListener {
 
 						if(SimpleRegionMarket.getEconomicManager() != null) {
 							Player p = event.getPlayer();
-							if(AgentManager.MAX_REGIONS != 0) {
+							if(AgentManager.max_regions != 0) {
 								int count = 0;
 								count = SimpleRegionMarket.getWorldGuard().getRegionManager(b.getWorld()).getRegionCountOfPlayer(SimpleRegionMarket.getWorldGuard().wrapPlayer(p));
-								if(count >= AgentManager.MAX_REGIONS && !SimpleRegionMarket.isAdmin(p)) {
+								if(count >= AgentManager.max_regions && !SimpleRegionMarket.isAdmin(p)) {
 									LanguageHandler.outputError(p, "ERR_REGION_LIMIT", null);
 									return;
 								}
@@ -81,7 +82,7 @@ class PListener extends PlayerListener {
 												LanguageHandler.outputError(p, "ERR_ECO_TRANSFER", null);
 												ArrayList<String> list = new ArrayList<String>();
 												list.add(owner);
-												LanguageHandler.outputConsole("ERR_CREATE_ECO_ACCOUNT", list);
+												LanguageHandler.langOutputConsole("ERR_CREATE_ECO_ACCOUNT", Level.SEVERE, list);
 											}
 										}
 									} else {
@@ -91,7 +92,7 @@ class PListener extends PlayerListener {
 									LanguageHandler.outputError(p, "ERR_ECO_TRANSFER", null);
 									ArrayList<String> list = new ArrayList<String>();
 									list.add(p.getName());
-									LanguageHandler.outputConsole("ERR_CREATE_ECO_ACCOUNT", list);
+									LanguageHandler.langOutputConsole("ERR_CREATE_ECO_ACCOUNT", Level.SEVERE, list);
 								}
 							}
 						} else {

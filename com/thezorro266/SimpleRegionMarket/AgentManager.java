@@ -13,7 +13,7 @@ public class AgentManager {
 
 	private ArrayList<RegionAgent> agents = new ArrayList<RegionAgent>();
 
-	public static int MAX_REGIONS = 0;
+	public static int max_regions = 0;
 
 	public boolean addAgent(ProtectedRegion region, Location loc, Player p, double price) {
 		if (region != null) {
@@ -34,14 +34,15 @@ public class AgentManager {
 		Iterator<RegionAgent> itr = getAgentList().iterator();
 		while(itr.hasNext()) {
 			RegionAgent obj = itr.next();
-			if (obj.getWorldWorld() == null) { // world removed - remove agents from AgentList
+			if (obj.getWorldWorld() == null) { // world removed - remove agent
 				itr.remove();
-			} else if(obj.getProtectedRegion() == null) { // region removed - remove agents from region
+			} else if(obj.getProtectedRegion() == null) { // region removed - remove agent
 				obj.destroyAgent(false);
 				itr.remove();
-				ArrayList<String> list = new ArrayList<String>();
-				list.add(obj.getRegion());
-				LanguageHandler.outputConsole("ERR_REGION_DELETE", list);
+			} else if(obj.getLocation().getBlock() == null ||
+					 (obj.getLocation().getBlock().getTypeId() != 63 &&
+					  obj.getLocation().getBlock().getTypeId() != 68)) { // block is not a sign - remove agent
+				itr.remove();
 			}
 		}
 	}
